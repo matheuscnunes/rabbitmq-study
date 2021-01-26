@@ -5,6 +5,7 @@ plugins {
     id("io.spring.dependency-management") version "1.0.10.RELEASE"
     kotlin("jvm") version "1.4.21"
     kotlin("plugin.spring") version "1.4.21"
+    id("com.google.cloud.tools.jib") version "2.7.1"
 }
 
 group = "matheus.nunes.study.rabbitmqpublisher"
@@ -58,4 +59,18 @@ tasks.withType<KotlinCompile> {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+jib {
+    from.image = "openjdk:11.0.9-jre-slim"
+
+    container.creationTime = "USE_CURRENT_TIMESTAMP"
+    container.jvmFlags = listOf(
+            "-XX:+AlwaysActAsServerClassMachine",
+            "-XX:TieredStopAtLevel=1",
+            "-noverify",
+            "-XX:+UseG1GC",
+            "-XX:MinRAMPercentage=50.0",
+            "-XX:MaxRAMPercentage=80.0"
+    )
 }
