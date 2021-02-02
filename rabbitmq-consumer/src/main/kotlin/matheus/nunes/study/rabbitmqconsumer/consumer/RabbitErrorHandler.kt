@@ -12,6 +12,10 @@ class RabbitErrorHandler : RabbitListenerErrorHandler {
             amqpMessage: Message?,
             message: org.springframework.messaging.Message<*>?,
             exception: ListenerExecutionFailedException?): Any {
-            return "OK"
+        println(amqpMessage)
+        println(message)
+        println(exception?.message)
+        exception?.printStackTrace()
+        return "OK"
     }
 }
