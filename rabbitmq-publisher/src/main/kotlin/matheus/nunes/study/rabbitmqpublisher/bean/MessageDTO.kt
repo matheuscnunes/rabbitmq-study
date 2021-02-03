@@ -2,9 +2,8 @@ package matheus.nunes.study.rabbitmqpublisher.bean
 
 import java.time.Instant
 
-
-data class Message(
+data class MessageDTO(
         val text: String,
-        val createdAt: Instant? = Instant.now(),
+        val createdAt: Instant = Instant.now(),
         val extraInfo: Map<String, Any>?
-) : java.io.Serializable
+)

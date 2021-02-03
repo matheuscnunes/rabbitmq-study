@@ -1,7 +1,8 @@
-package matheus.nunes.study.rabbitmqconsumer.util
+package matheus.nunes.study.rabbitmqpublisher.util
 
 class RabbitConstants {
     companion object {
-        const val MESSAGE_QUEUE: String = "message"
+        const val DIRECT_MESSAGE_QUEUE: String = "direct-message-queue"
+        const val EXCHANGE_FANOUT: String = "message-persistence"
     }
 }
