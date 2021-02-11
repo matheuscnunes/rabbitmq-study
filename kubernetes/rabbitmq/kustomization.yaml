@@ -4,7 +4,4 @@ commonLabels:
 bases:
  - base
 
-resources:
- - namespace.yaml 
-
-namespace: rabbitmq-dev
+namespace: infrastructure

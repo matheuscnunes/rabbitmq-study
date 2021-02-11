@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq-publisher
+  namespace: applications
+  labels:
+    app: rabbitmq-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq-publisher
+  template:
+    metadata:
+      labels:
+        app: rabbitmq-publisher
+    spec:
+      containers:
+        - image: localhost:5000/rabbitmq-publisher:0.0.1-SNAPSHOT
+          ports:
+            - containerPort: 80
+          imagePullPolicy: Always
+          name: rabbitmq-publisher
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "300m"
+            limits:
+              memory: "512Mi"
+              cpu: "600m"
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "kubedev"
+            - name: SERVER_PORT
+              value: "80"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 80
+            initialDelaySeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 1
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 80
+            initialDelaySeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 1
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq-consumer
+  namespace: applications
+  labels:
+    app: rabbitmq-consumer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rabbitmq-consumer
+  template:
+    metadata:
+      labels:
+        app: rabbitmq-consumer
+    spec:
+      containers:
+        - image: localhost:5000/rabbitmq-consumer:0.0.1-SNAPSHOT
+          ports:
+            - containerPort: 80
+          imagePullPolicy: Always
+          name: rabbitmq-consumer
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "300m"
+            limits:
+              memory: "512Mi"
+              cpu: "600m"
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "kubedev"
+            - name: SERVER_PORT
+              value: "80"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 80
+            initialDelaySeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 1
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 80
+            initialDelaySeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 1
