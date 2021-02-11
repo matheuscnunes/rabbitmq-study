@@ -1,1 +1,0 @@
-/home/matheus.nunes/Workspace/Demos/rabbitmq/build/classes/kotlin/main/matheus/nunes/study/rabbitmq/RabbitmqApplication.class:/home/matheus.nunes/Workspace/Demos/rabbitmq/build/classes/kotlin/main/matheus/nunes/study/rabbitmq/RabbitmqApplicationKt.class
