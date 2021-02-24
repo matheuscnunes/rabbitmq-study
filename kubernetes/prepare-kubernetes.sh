@@ -54,5 +54,7 @@ data:
 EOF
 
 kubectl apply -f config/namespaces.yaml
+kubectl apply -f config/ingress.yaml
+kubectl apply -k rabbitmq/
 kubectl ns applications
 kubectl get pods

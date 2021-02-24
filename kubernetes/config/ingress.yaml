@@ -11,7 +11,7 @@ metadata:
     kubernetes.io/ingress.class: traefik
 spec:
   rules:
-    - host: rabbitmq-consumer.default.nunes.matheus
+    - host: rabbitmq-consumer.applications.nunes.matheus
       http:
         paths:
           - path: /
@@ -19,12 +19,20 @@ spec:
               serviceName: rabbitmq-consumer
               servicePort: http
 
-    - host: rabbitmq-producer.default.nunes.matheus
+    - host: rabbitmq-producer.applications.nunes.matheus
       http:
         paths:
           - path: /
             backend:
               serviceName: rabbitmq-producer
+              servicePort: http
+
+    - host: rabbitmq.infrastructure.nunes.matheus
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: rabbitmq
               servicePort: http
 
 ---
