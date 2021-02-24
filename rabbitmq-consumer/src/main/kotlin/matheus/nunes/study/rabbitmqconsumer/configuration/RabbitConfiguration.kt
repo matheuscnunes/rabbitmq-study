@@ -7,21 +7,22 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import matheus.nunes.study.rabbitmqconsumer.util.RabbitConstants
 import org.springframework.amqp.core.*
-import org.springframework.amqp.core.Queue
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import java.util.*
 
 
 @Configuration
-class RabbitConfiguration {
+class RabbitConfiguration(
+        @Value("\${rabbit.message-persistence.queue-prefix}-\${random.uuid}")
+        val controlQueueName: String
+) {
 
     @Bean
     fun declarable(): Declarables {
         val fanoutExchange: FanoutExchange = ExchangeBuilder.fanoutExchange(RabbitConstants.EXCHANGE_FANOUT).build()
-        val messagePersistenceQueue = Queue(RabbitConstants.FANOUT_QUEUE_PREFIX + UUID.randomUUID().toString(),
-                false, true, true)
+        val messagePersistenceQueue = Queue(controlQueueName, false, true, true)
 
         return Declarables(
                 Queue(RabbitConstants.DIRECT_MESSAGE_QUEUE),
