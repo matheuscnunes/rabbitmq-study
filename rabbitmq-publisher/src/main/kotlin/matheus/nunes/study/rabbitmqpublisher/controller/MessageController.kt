@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/rabbit")
-class RabbitMQController(
+@RequestMapping("/message")
+class MessageController(
         private val rabbitPublisher: RabbitPublisher
 ) {
 

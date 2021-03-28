@@ -1,38 +1,37 @@
 package matheus.nunes.study.rabbitmqconsumer.consumer
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import matheus.nunes.study.rabbitmqconsumer.bean.Message
+import matheus.nunes.study.rabbitmqconsumer.bean.Log
 import matheus.nunes.study.rabbitmqconsumer.util.RabbitConstants
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
-class RabbitMessageConsumer(
+class RabbitLogConsumer(
         @Value("\${rabbitmq.message-queue:message}")
         private val queueName: String,
         private val objectMapper: ObjectMapper
 ) : RabbitDelayedInconsistentConsumer() {
 
     @RabbitListener(
-            queues = [RabbitConstants.DIRECT_MESSAGE_QUEUE],
-            concurrency = "2",
+            queues = [RabbitConstants.DIRECT_COMMON_LOGS_QUEUE],
+            concurrency = "1",
             errorHandler = RabbitConstants.ERROR_HANDLER
     )
-    fun receiveMessage(message: Message) = processMessage(message)
+    fun receiveCommonLogMessage(log: Log) = processLog(log)
 
     @RabbitListener(
-            queues = ["#{rabbitConfiguration.messagePersistenceQueueName}"],
-            concurrency = "2",
+            queues = [RabbitConstants.DIRECT_ERROR_LOGS_QUEUE],
+            concurrency = "1",
             errorHandler = RabbitConstants.ERROR_HANDLER
     )
-    fun receiveFanOutMessage(message: Message) = processMessage(message)
+    fun receiveErrorLogsMessage(log: Log) = processLog(log)
 
-    private fun processMessage(message: Message) {
-        checkError(2)
-
-        println("Received message. Start processing it")
-        delayExecutionByDotsNumber(message.text)
-        println("Processed message ${objectMapper.writeValueAsString(message)}")
+    private fun processLog(log: Log) {
+        checkError(1)
+        println("Received ${log.info} log. Start processing it")
+        delayExecutionByDotsNumber(log.message)
+        println("Processed log ${objectMapper.writeValueAsString(log)}")
     }
 }

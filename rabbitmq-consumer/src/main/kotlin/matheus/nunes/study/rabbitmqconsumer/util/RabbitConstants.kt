@@ -3,7 +3,10 @@ package matheus.nunes.study.rabbitmqconsumer.util
 class RabbitConstants {
     companion object {
         const val DIRECT_MESSAGE_QUEUE: String = "direct-message-queue"
-        const val EXCHANGE_FANOUT: String = "message-persistence"
+        const val FANOUT_EXCHANGE: String = "message-persistence"
+        const val LOGS_EXCHANGE: String = "logs-exchange"
+        const val DIRECT_COMMON_LOGS_QUEUE: String = "common-logs"
+        const val DIRECT_ERROR_LOGS_QUEUE: String = "error-logs"
         const val ERROR_HANDLER: String = "rabbitErrorHandler"
     }
 }

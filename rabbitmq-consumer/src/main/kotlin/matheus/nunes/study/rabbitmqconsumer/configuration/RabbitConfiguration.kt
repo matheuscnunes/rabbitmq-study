@@ -16,21 +16,37 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class RabbitConfiguration(
         @Value("\${rabbit.message-persistence.queue-prefix}-\${random.uuid}")
-        val controlQueueName: String
+        val messagePersistenceQueueName: String
 ) {
 
     @Bean
     fun declarable(): Declarables {
-        val fanoutExchange: FanoutExchange = ExchangeBuilder.fanoutExchange(RabbitConstants.EXCHANGE_FANOUT).build()
-        val messagePersistenceQueue = Queue(controlQueueName, false, true, true)
+        // Basic work queue, using default exchange
+        val queue = Queue(RabbitConstants.DIRECT_MESSAGE_QUEUE)
+
+        // Fanout Exchange (Publish/Subscriber)
+        val fanoutExchange: FanoutExchange = ExchangeBuilder.fanoutExchange(RabbitConstants.FANOUT_EXCHANGE).build()
+        val messagePersistenceFanoutQueue = Queue(messagePersistenceQueueName, false, true, true)
+        val fanoutBinding = BindingBuilder.bind(messagePersistenceFanoutQueue).to(fanoutExchange)
+
+        // Routing Exchange
+        val directRoutingExchange: DirectExchange = ExchangeBuilder.directExchange(RabbitConstants.LOGS_EXCHANGE).build()
+        val commonLogsQueue = Queue(RabbitConstants.DIRECT_COMMON_LOGS_QUEUE)
+        val errorLogsQueue = Queue(RabbitConstants.DIRECT_ERROR_LOGS_QUEUE)
+        val infoLogsBinding = BindingBuilder.bind(commonLogsQueue).to(directRoutingExchange).with("INFO")
+        val warnLogsBinding = BindingBuilder.bind(commonLogsQueue).to(directRoutingExchange).with("WARN")
+        val errorLogsBinding = BindingBuilder.bind(directRoutingExchange).to(directRoutingExchange).with("error")
 
         return Declarables(
-                Queue(RabbitConstants.DIRECT_MESSAGE_QUEUE),
+                queue,
                 fanoutExchange,
-                messagePersistenceQueue,
-                BindingBuilder
-                        .bind(messagePersistenceQueue)
-                        .to(fanoutExchange)
+                messagePersistenceFanoutQueue,
+                fanoutBinding,
+                commonLogsQueue,
+                errorLogsQueue,
+                infoLogsBinding,
+                warnLogsBinding,
+                errorLogsBinding
         )
     }
 
