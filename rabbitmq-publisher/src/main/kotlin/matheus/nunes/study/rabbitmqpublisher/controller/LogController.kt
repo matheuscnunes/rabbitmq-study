@@ -1,8 +1,8 @@
 package matheus.nunes.study.rabbitmqpublisher.controller
 
 import matheus.nunes.study.rabbitmqpublisher.bean.request.Log
-import matheus.nunes.study.rabbitmqpublisher.bean.request.Message
 import matheus.nunes.study.rabbitmqpublisher.service.RabbitPublisher
+import matheus.nunes.study.rabbitmqpublisher.util.logger
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -14,9 +14,14 @@ class LogController(
         private val rabbitPublisher: RabbitPublisher
 ) {
 
+    companion object {
+        val logger by logger()
+    }
+
     @PostMapping("/publish")
-    fun postMessage(@RequestBody log: Log): Log {
-        rabbitPublisher.publish(log)
-        return log
+    fun postMessage(@RequestBody logRecord: Log): Log {
+        logger.info("Received publish request for log $logRecord")
+        rabbitPublisher.publish(logRecord)
+        return logRecord
     }
 }

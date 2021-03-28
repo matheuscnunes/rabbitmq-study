@@ -3,16 +3,18 @@ package matheus.nunes.study.rabbitmqconsumer.consumer
 import com.fasterxml.jackson.databind.ObjectMapper
 import matheus.nunes.study.rabbitmqconsumer.bean.Log
 import matheus.nunes.study.rabbitmqconsumer.util.RabbitConstants
+import matheus.nunes.study.rabbitmqconsumer.util.logger
 import org.springframework.amqp.rabbit.annotation.RabbitListener
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
 class RabbitLogConsumer(
-        @Value("\${rabbitmq.message-queue:message}")
-        private val queueName: String,
         private val objectMapper: ObjectMapper
 ) : RabbitDelayedInconsistentConsumer() {
+
+    companion object {
+        val logger by logger()
+    }
 
     @RabbitListener(
             queues = [RabbitConstants.DIRECT_COMMON_LOGS_QUEUE],
@@ -28,10 +30,10 @@ class RabbitLogConsumer(
     )
     fun receiveErrorLogsMessage(log: Log) = processLog(log)
 
-    private fun processLog(log: Log) {
+    private fun processLog(logRecord: Log) {
         checkError(1)
-        println("Received ${log.info} log. Start processing it")
-        delayExecutionByDotsNumber(log.message)
-        println("Processed log ${objectMapper.writeValueAsString(log)}")
+        logger.info("Received ${logRecord.level.name} log. Start processing it")
+        delayExecutionByDotsNumber(logRecord.message)
+        logger.info("Processed log ${objectMapper.writeValueAsString(logRecord)}")
     }
 }

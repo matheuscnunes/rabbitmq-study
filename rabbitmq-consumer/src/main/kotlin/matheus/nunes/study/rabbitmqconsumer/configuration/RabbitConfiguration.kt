@@ -35,7 +35,7 @@ class RabbitConfiguration(
         val errorLogsQueue = Queue(RabbitConstants.DIRECT_ERROR_LOGS_QUEUE)
         val infoLogsBinding = BindingBuilder.bind(commonLogsQueue).to(directRoutingExchange).with("INFO")
         val warnLogsBinding = BindingBuilder.bind(commonLogsQueue).to(directRoutingExchange).with("WARN")
-        val errorLogsBinding = BindingBuilder.bind(directRoutingExchange).to(directRoutingExchange).with("error")
+        val errorLogsBinding = BindingBuilder.bind(errorLogsQueue).to(directRoutingExchange).with("ERROR")
 
         return Declarables(
                 queue,
