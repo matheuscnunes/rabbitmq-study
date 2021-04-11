@@ -29,9 +29,18 @@ class RabbitConfiguration {
         val directRoutingExchange: DirectExchange = ExchangeBuilder.directExchange(RabbitConstants.LOGS_EXCHANGE).build()
         val commonLogsQueue = Queue(RabbitConstants.DIRECT_COMMON_LOGS_QUEUE)
         val errorLogsQueue = Queue(RabbitConstants.DIRECT_ERROR_LOGS_QUEUE)
-        val infoLogsBinding = BindingBuilder.bind(commonLogsQueue).to(directRoutingExchange).with("INFO")
-        val warnLogsBinding = BindingBuilder.bind(commonLogsQueue).to(directRoutingExchange).with("WARN")
-        val errorLogsBinding = BindingBuilder.bind(errorLogsQueue).to(directRoutingExchange).with("ERROR")
+        val infoLogsBinding = BindingBuilder.bind(commonLogsQueue).to(directRoutingExchange).with(RabbitConstants.INFO_ROUTING_KEY)
+        val warnLogsBinding = BindingBuilder.bind(commonLogsQueue).to(directRoutingExchange).with(RabbitConstants.WARN_ROUTING_KEY)
+        val errorLogsBinding = BindingBuilder.bind(errorLogsQueue).to(directRoutingExchange).with(RabbitConstants.ERROR_ROUTING_KEY)
+
+        // Topic Exchange - animals features
+        val topicExchange = ExchangeBuilder.topicExchange(RabbitConstants.ANIMALS_EXCHANGE).build<TopicExchange>()
+        val horsesQueue = Queue(RabbitConstants.ALL_HORSES_QUEUE)
+        val blackAnimalsQueue = Queue(RabbitConstants.ALL_BLACK_ANIMALS_QUEUE)
+        val quickBlackTurtlesQueue = Queue(RabbitConstants.QUICK_BLACK_TURTLES_QUEUE)
+        val horsesBinding = BindingBuilder.bind(horsesQueue).to(topicExchange).with(RabbitConstants.HORSES_ROUTING_KEY)
+        val blackAnimalsBinding = BindingBuilder.bind(blackAnimalsQueue).to(topicExchange).with(RabbitConstants.BLACK_ANIMALS_ROUTING_KEY)
+        val quickBlackTurtlesBinding = BindingBuilder.bind(quickBlackTurtlesQueue).to(topicExchange).with(RabbitConstants.QUICK_BLACK_TURTLES_ROUTING_KEY)
 
         return Declarables(
                 queue,
@@ -41,7 +50,14 @@ class RabbitConfiguration {
                 errorLogsQueue,
                 infoLogsBinding,
                 warnLogsBinding,
-                errorLogsBinding
+                errorLogsBinding,
+                topicExchange,
+                horsesQueue,
+                blackAnimalsQueue,
+                quickBlackTurtlesQueue,
+                horsesBinding,
+                blackAnimalsBinding,
+                quickBlackTurtlesBinding
         )
     }
 

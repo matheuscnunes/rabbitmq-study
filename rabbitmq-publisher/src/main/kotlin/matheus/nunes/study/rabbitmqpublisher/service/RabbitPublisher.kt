@@ -1,8 +1,10 @@
 package matheus.nunes.study.rabbitmqpublisher.service
 
+import matheus.nunes.study.rabbitmqpublisher.bean.request.Animal
 import matheus.nunes.study.rabbitmqpublisher.bean.request.ExchangeType
 import matheus.nunes.study.rabbitmqpublisher.bean.request.Log
 import matheus.nunes.study.rabbitmqpublisher.bean.request.Message
+import matheus.nunes.study.rabbitmqpublisher.extension.toRoutingKey
 import matheus.nunes.study.rabbitmqpublisher.util.RabbitConstants
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.stereotype.Component
@@ -25,5 +27,9 @@ class RabbitPublisher(
     fun publish(log: Log) {
         val logDTO = log.toLogDTO()
         rabbitTemplate.convertAndSend(RabbitConstants.LOGS_EXCHANGE, logDTO.level.name, logDTO)
+    }
+
+    fun publish(animal: Animal) {
+        rabbitTemplate.convertAndSend(RabbitConstants.ANIMALS_EXCHANGE, animal.toRoutingKey(), animal)
     }
 }
